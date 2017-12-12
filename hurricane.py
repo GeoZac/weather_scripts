@@ -23,16 +23,19 @@ def fetch_hurricane(name):  # Fetch only the one passed as query
 
 
 def get_data(query):  # Fetches current state of cyclone whose name is passed as argument
-    hurricane = fetch_hurricane(query)
-    name = hurricane['stormInfo']['stormName']
-    loc = hurricane['Current']['lat'], hurricane['Current']['lon']
-    how_far = round(haversine(loc, home), ndigits=3)
-    wind_speed = hurricane['Current']['WindSpeed']['Kph']
-    gust_speed = hurricane['Current']['WindGust']['Kph']
-    direction = hurricane['Current']['Movement']['Text']
-    speed = hurricane['Current']['Fspeed']['Kph']
-    movement = "{0} at {1} kmph".format(direction, speed)
-    print(name, loc, how_far, wind_speed, gust_speed, movement)
+    try:
+        hurricane = fetch_hurricane(query)
+        name = hurricane['stormInfo']['stormName']
+        loc = hurricane['Current']['lat'], hurricane['Current']['lon']
+        how_far = round(haversine(loc, home), ndigits=3)
+        wind_speed = hurricane['Current']['WindSpeed']['Kph']
+        gust_speed = hurricane['Current']['WindGust']['Kph']
+        direction = hurricane['Current']['Movement']['Text']
+        speed = hurricane['Current']['Fspeed']['Kph']
+        movement = "{0} at {1} kmph".format(direction, speed)
+        print(name, loc, how_far, wind_speed, gust_speed, movement)
+    except TypeError:
+        print("{} is not a currently active Cyclone".format(query))
 
 
 def get_current():  # Fetches current Tropical Cyclones,to get the name t obe passed in case of get_data()
