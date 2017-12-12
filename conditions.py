@@ -19,7 +19,7 @@ def get_weather(loc):
         # temp = temp_c + "/" +temp_f
         temp = resp.json()['current_observation']['temperature_string']
         full_location = resp.json()['current_observation']['display_location']['full']
-        weather = "The current temperature in {0} is {1}. It's currently humid and partly cloudy️.".format(
+        weather = "The current temperature in {0} is {1}.".format(
             full_location, temp)
         print(weather)
     except KeyError:
