@@ -36,6 +36,8 @@ def get_data(query):  # Fetches current state of cyclone whose name is passed as
         print(name, loc, how_far, wind_speed, gust_speed, movement)
     except TypeError:
         print("{} is not a currently active Cyclone".format(query))
+        print("Currently active ones are:")
+        get_current()
 
 
 def get_current():  # Fetches current Tropical Cyclones,to get the name t obe passed in case of get_data()
