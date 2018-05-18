@@ -1,8 +1,7 @@
 import sys
 from requests import get
-from config import api_key
+from config import api_key, home
 from haversine import haversine
-from distance import home
 
 url = "http://api.wunderground.com/api/{}/currenthurricane/view.json".format(api_key)
 
@@ -43,11 +42,14 @@ def get_data(query):  # Fetches current state of cyclone whose name is passed as
 def get_current():  # Fetches current Tropical Cyclones,to get the name t obe passed in case of get_data()
     data = fetch_data()
     hurricanes = data['currenthurricane']
-    for i in range(0, len(hurricanes)):
-        name = hurricanes[i]['stormInfo']['stormName']
-        loc = hurricanes[i]['Current']['lat'], hurricanes[i]['Current']['lon']
-        how_far = round(haversine(loc, home), ndigits=2)
-        print(name, how_far)
+    if len(hurricanes) == 0:
+        print("No active hurricanes")
+    else:
+        for i in range(0, len(hurricanes)):
+            name = hurricanes[i]['stormInfo']['stormName']
+            loc = hurricanes[i]['Current']['lat'], hurricanes[i]['Current']['lon']
+            how_far = round(haversine(loc, home), ndigits=2)
+            print(name, how_far)
         # TODO Solve names being displayed twice
 
 
