@@ -41,18 +41,17 @@ def get_data(query):  # Fetches current state of cyclone whose name is passed as
         get_current()
 
 
-def get_current():  # Fetches current Tropical Cyclones,to get the name t obe passed in case of get_data()
+def get_current():  # Fetches current Tropical Cyclones,to get the name to be passed in case of get_data()
     data = fetch_data()
-    hurricanes = data['currenthurricane']
-    if len(hurricanes) == 0:
-        print("No active hurricanes")
-    else:
-        for i in range(0, len(hurricanes)):
-            name = hurricanes[i]['stormInfo']['stormName']
-            loc = hurricanes[i]['Current']['lat'], hurricanes[i]['Current']['lon']
-            how_far = round(haversine(loc, home), ndigits=2)
-            print(name, how_far)
-        # TODO Solve names being displayed twice
+    try:
+        hurricanes = data['currenthurricane']
+    except KeyError:
+        exit("No Active cyclones tracked")
+    for i in range(0, len(hurricanes)):
+        name = hurricanes[i]['stormInfo']['stormName']
+        loc = hurricanes[i]['Current']['lat'], hurricanes[i]['Current']['lon']
+        how_far = round(haversine(loc, loc_home), ndigits=2)
+        print(name, how_far, "km")
 
 
 # def pprint(name, loc, how_far, wind_speed, movement):
