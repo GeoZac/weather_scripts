@@ -28,13 +28,13 @@ def get_data(query):  # Fetches current state of cyclone whose name is passed as
         hurricane = fetch_hurricane(query)
         name = hurricane['stormInfo']['stormName']
         loc = hurricane['Current']['lat'], hurricane['Current']['lon']
-        how_far = round(haversine(loc, home), ndigits=3)
+        how_far = round(haversine(loc, loc_home), ndigits=3)
         wind_speed = hurricane['Current']['WindSpeed']['Kph']
         gust_speed = hurricane['Current']['WindGust']['Kph']
         direction = hurricane['Current']['Movement']['Text']
         speed = hurricane['Current']['Fspeed']['Kph']
         movement = "{0} at {1} kmph".format(direction, speed)
-        print(name, loc, how_far, wind_speed, gust_speed, movement)
+        print(name, "is at", loc," which is", how_far,"km far and with winds blowing at", wind_speed, "and gusts at ", gust_speed, "moving ", movement)
     except TypeError:
         print("{} is not a currently active Cyclone".format(query))
         print("Currently active ones are:")
@@ -43,15 +43,24 @@ def get_data(query):  # Fetches current state of cyclone whose name is passed as
 
 def get_current():  # Fetches current Tropical Cyclones,to get the name to be passed in case of get_data()
     data = fetch_data()
+    ch_list = []
     try:
         hurricanes = data['currenthurricane']
     except KeyError:
+        hurricanes = []
         exit("No Active cyclones tracked")
+    i = 0
     for i in range(0, len(hurricanes)):
         name = hurricanes[i]['stormInfo']['stormName']
         loc = hurricanes[i]['Current']['lat'], hurricanes[i]['Current']['lon']
         how_far = round(haversine(loc, loc_home), ndigits=2)
-        print(name, how_far, "km")
+        ch_list.append(name)
+        print(i+1, name, how_far, "km")
+    ch = int(input("Enter no of hurricane to track: "))
+    if ch < i+2:
+        get_data(str(ch_list[ch-1]))
+    else:
+        exit(0)
 
 
 # def pprint(name, loc, how_far, wind_speed, movement):
