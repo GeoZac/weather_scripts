@@ -1,5 +1,6 @@
 import sys
 from requests import get
+from datetime import datetime as dt
 from config import api_key, home
 from haversine import haversine
 
@@ -24,15 +25,15 @@ def fetch_data():  # Get the current data from weather channel
 #             return hurricane
 #
 #
-# def extendedprediction(who, forecast):
-#     for index in forecast:
-#         pos = index['lat'], index['lon']
-#         time = index['Time']['pretty']
-#         dist = round(haversine(pos, loc_home), ndigits=3)
-#         speed = index['WindSpeed']['Kph']
-#         print("{} will be at {} on {} which is {} km far with speeds of {} kmph".format(who, pos, time, dist, speed))
-#
-#
+def extendedprediction(who, forecast):
+    for index in forecast:
+        pos = index["location"]["coordinates"]
+        time = dt.fromtimestamp(index["timestamp"]).strftime("%H:%M %d/%m")
+        dist = round(haversine(reversed(pos), loc_home), ndigits=3)
+        speed = index["details"]["windSpeedKPH"]
+        print("{} will be at {} on {} which is {} km far with speeds of {} kmph".format(who, pos, time, dist, speed))
+
+
 def get_data(data, index):  # Fetches current state of cyclone whose name is passed as argument
     try:
         name = data[index]["profile"]["name"]
@@ -45,9 +46,9 @@ def get_data(data, index):  # Fetches current state of cyclone whose name is pas
         movement = "{0} at {1} kmph".format(direction, speed)
         print(name, "is at", loc, " which is", how_far, "km far and with winds blowing at", wind_speed, "and gusts at",
               gust_speed, " & moving ", movement)
-#         minfo = input("Would yo like some extended predictions ?")
-#         if minfo is ('y' or 'Y'):
-#             extendedprediction(name, hurricane['forecast'])
+        minfo = input("Would yo like some extended predictions ?")
+        if minfo is ('y' or 'Y'):
+            extendedprediction(name, data[index]["forecast"])
     except TypeError:
         print("{} is not a currently active Cyclone".format(index))
         print("Currently active ones are:")
