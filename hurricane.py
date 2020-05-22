@@ -33,26 +33,25 @@ def fetch_data():  # Get the current data from weather channel
 #         print("{} will be at {} on {} which is {} km far with speeds of {} kmph".format(who, pos, time, dist, speed))
 #
 #
-# def get_data(query):  # Fetches current state of cyclone whose name is passed as argument
-#     try:
-#         hurricane = fetch_hurricane(query)
-#         name = hurricane['stormInfo']['stormName']
-#         loc = hurricane['Current']['lat'], hurricane['Current']['lon']
-#         how_far = round(haversine(loc, loc_home), ndigits=3)
-#         wind_speed = hurricane['Current']['WindSpeed']['Kph']
-#         gust_speed = hurricane['Current']['WindGust']['Kph']
-#         direction = hurricane['Current']['Movement']['Text']
-#         speed = hurricane['Current']['Fspeed']['Kph']
-#         movement = "{0} at {1} kmph".format(direction, speed)
-#         print(name, "is at", loc, " which is", how_far, "km far and with winds blowing at", wind_speed, "and gusts at",
-#               gust_speed, " & moving ", movement)
+def get_data(data, index):  # Fetches current state of cyclone whose name is passed as argument
+    try:
+        name = data[index]["profile"]["name"]
+        loc = data[index]["position"]["location"]["coordinates"]
+        how_far = round(haversine(reversed(loc), loc_home), ndigits=3)
+        wind_speed = data[index]["position"]["details"]["windSpeedKPH"]
+        gust_speed = data[index]["position"]["details"]["gustSpeedKPH"]
+        direction = data[index]["position"]["details"]["movement"]["direction"]
+        speed = data[index]["position"]["details"]["movement"]["speedKPH"]
+        movement = "{0} at {1} kmph".format(direction, speed)
+        print(name, "is at", loc, " which is", how_far, "km far and with winds blowing at", wind_speed, "and gusts at",
+              gust_speed, " & moving ", movement)
 #         minfo = input("Would yo like some extended predictions ?")
 #         if minfo is ('y' or 'Y'):
 #             extendedprediction(name, hurricane['forecast'])
-#     except TypeError:
-#         print("{} is not a currently active Cyclone".format(query))
-#         print("Currently active ones are:")
-#         get_current()
+    except TypeError:
+        print("{} is not a currently active Cyclone".format(index))
+        print("Currently active ones are:")
+        get_current()
 
 
 def get_current():  # Fetches current Tropical Cyclones,to get the name to be passed in case of get_data()
@@ -68,7 +67,7 @@ def get_current():  # Fetches current Tropical Cyclones,to get the name to be pa
             how_far = round(haversine(reversed(coor), loc_home), ndigits=2)
             print(index, name, how_far, "km")
         selection = int(input("Enter no of hurricane to track: "))
-        # get_data(current, selection - 1)
+        get_data(current, selection - 1)
 
 
 if __name__ == "__main__":
