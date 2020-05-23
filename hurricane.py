@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from math import atan2, cos, degrees, radians, sin
 
 from haversine import haversine
 from requests import get
@@ -13,6 +14,37 @@ LOC_HOME = [float(x) for x in home.split(",")]
 def fetch_data():  # Get the current data from weather channel
     data = get(URL).json()
     return data
+
+
+def calculate_compass_bearing(point_a, point_b):
+    """
+    Calculates the bearing between two points.
+    The formulae used is the following:
+        θ = atan2(sin(Δlong).cos(lat2),
+                  cos(lat1).sin(lat2) − sin(lat1).cos(lat2).cos(Δlong))
+    :param point_a: The tuple representing the latitude/longitude for the first point. Latitude and longitude must be in
+     decimal degrees
+    :param point_b: The tuple representing the latitude/longitude for the second point. Latitude and longitude must be
+    in decimal degrees
+    :return: The bearing in pin wheel directions
+    """
+    lat1 = radians(point_a[0])
+    lat2 = radians(point_b[0])
+
+    diff_long = radians(point_b[1] - point_a[1])
+
+    x_dir = sin(diff_long) * cos(lat2)
+    y_dir = cos(lat1) * sin(lat2) - (sin(lat1) * cos(lat2) * cos(diff_long))
+
+    initial_bearing = atan2(x_dir, y_dir)
+
+    # Now we have the initial bearing but math.atan2 return values
+    # from -180° to + 180° which is not what we want for a compass bearing
+    # The solution is to normalize the initial bearing as shown below
+    initial_bearing = degrees(initial_bearing)
+    compass_bearing = (initial_bearing + 360) % 360
+    compass_bearing = round(compass_bearing, ndigits=1)
+    return compass_bearing
 
 
 def extendedprediction(who, forecast):
