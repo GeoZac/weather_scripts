@@ -67,24 +67,19 @@ def extendedprediction(who, forecast, initial):
 
 
 def get_data(data, index):  # Fetches current state of cyclone whose name is passed as argument
-    try:
-        name = data[index]["profile"]["name"]
-        loc = data[index]["position"]["location"]["coordinates"]
-        how_far = round(haversine(reversed(loc), LOC_HOME), ndigits=3)
-        wind_speed = data[index]["position"]["details"]["windSpeedKPH"]
-        gust_speed = data[index]["position"]["details"]["gustSpeedKPH"]
-        direction = data[index]["position"]["details"]["movement"]["direction"]
-        speed = data[index]["position"]["details"]["movement"]["speedKPH"]
-        movement = "{0} at {1} kmph".format(direction, speed)
-        print(name, "is at", loc, " which is", how_far, "km far and with winds blowing at", wind_speed, "and gusts at",
-              gust_speed, " & moving ", movement)
-        minfo = input("Would you like some extended predictions ?")
-        if minfo.lower() == "y":
-            extendedprediction(name, data[index]["forecast"], loc)
-    except TypeError:
-        print("{} is not a currently active Cyclone".format(index))
-        print("Currently active ones are:")
-        get_current()
+    name = data[index]["profile"]["name"]
+    loc = data[index]["position"]["location"]["coordinates"]
+    how_far = round(haversine(reversed(loc), LOC_HOME), ndigits=3)
+    wind_speed = data[index]["position"]["details"]["windSpeedKPH"]
+    gust_speed = data[index]["position"]["details"]["gustSpeedKPH"]
+    direction = data[index]["position"]["details"]["movement"]["direction"]
+    speed = data[index]["position"]["details"]["movement"]["speedKPH"]
+    movement = "{0} at {1} kmph".format(direction, speed)
+    print(name, "is at", loc, " which is", how_far, "km far and with winds blowing at", wind_speed, "and gusts at",
+          gust_speed, " & moving ", movement)
+    minfo = input("Would you like some extended predictions ?")
+    if minfo.lower() == "y":
+        extendedprediction(name, data[index]["forecast"], loc)
 
 
 def get_current():  # Fetches current Tropical Cyclones,to get the name to be passed in case of get_data()
