@@ -47,13 +47,16 @@ def calculate_compass_bearing(point_a, point_b):
     return compass_bearing
 
 
-def extendedprediction(who, forecast):
+def extendedprediction(who, forecast, initial):
     for index in forecast:
         pos = index["location"]["coordinates"]
         time = dt.fromtimestamp(index["timestamp"]).strftime("%H:%M %d/%m")
         dist = round(haversine(reversed(pos), LOC_HOME), ndigits=3)
         speed = index["details"]["windSpeedKPH"]
-        print("{} will be at {} on {} which is {} km far with speeds of {} kmph".format(who, pos, time, dist, speed))
+        bearing = calculate_compass_bearing(initial, pos)
+        print("{} will be at {} on {} which is {} km far with speeds of {} kmph moving {}".format(who, pos, time, dist,
+                                                                                                  speed, bearing))
+        initial = pos
 
 
 def get_data(data, index):  # Fetches current state of cyclone whose name is passed as argument
@@ -70,7 +73,7 @@ def get_data(data, index):  # Fetches current state of cyclone whose name is pas
               gust_speed, " & moving ", movement)
         minfo = input("Would you like some extended predictions ?")
         if minfo.lower() == "y":
-            extendedprediction(name, data[index]["forecast"])
+            extendedprediction(name, data[index]["forecast"], loc)
     except TypeError:
         print("{} is not a currently active Cyclone".format(index))
         print("Currently active ones are:")
