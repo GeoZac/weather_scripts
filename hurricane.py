@@ -6,7 +6,7 @@ from requests import get
 
 from config import api_key, home
 
-URL = "https://api.aerisapi.com/tropicalcyclones/?&filter=all&limit=5&format=json&{}".format(api_key)
+URL = f"https://api.aerisapi.com/tropicalcyclones/?&filter=all&limit=5&format=json&{api_key}"
 
 LOC_HOME = [float(x) for x in home.split(",")]
 
@@ -61,8 +61,7 @@ def extendedprediction(who, forecast, initial):
         dist = round(haversine(reversed(pos), LOC_HOME), ndigits=3)
         speed = index["details"]["windSpeedKPH"]
         bearing = calculate_compass_bearing(initial, pos)
-        print("{} will be at {} on {} which is {} km far with speeds of {} kmph moving {}".format(who, pos, time, dist,
-                                                                                                  speed, bearing))
+        print(f"{who} will be at {pos} on {time} which is {dist} km far with speeds of {speed} kmph moving {bearing}")
         initial = pos
 
 
@@ -74,9 +73,9 @@ def get_data(data, index):  # Fetches current state of cyclone whose name is pas
     gust_speed = data[index]["position"]["details"]["gustSpeedKPH"]
     direction = data[index]["position"]["details"]["movement"]["direction"]
     speed = data[index]["position"]["details"]["movement"]["speedKPH"]
-    movement = "{0} at {1} kmph".format(direction, speed)
-    print(name, "is at", loc, " which is", how_far, "km far and with winds blowing at", wind_speed, "and gusts at",
-          gust_speed, " & moving ", movement)
+    movement = f"{direction} at {speed} kmph"
+    print(f"{name}is at {loc} which is {how_far} km far and with winds blowing at {wind_speed} and gusts at "
+          f"{gust_speed} & moving {movement}")
     minfo = input("Would you like some extended predictions ?")
     if minfo.lower() == "y":
         extendedprediction(name, data[index]["forecast"], loc)
