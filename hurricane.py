@@ -16,6 +16,12 @@ def fetch_data():  # Get the current data from weather channel
     return data
 
 
+def deg_to_pinwheel(degree):
+    dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+    index = round(degree / (360. / len(dirs)))
+    return dirs[index % len(dirs)]
+
+
 def calculate_compass_bearing(point_a, point_b):
     """
     Calculates the bearing between two points.
@@ -44,6 +50,7 @@ def calculate_compass_bearing(point_a, point_b):
     initial_bearing = degrees(initial_bearing)
     compass_bearing = (initial_bearing + 360) % 360
     compass_bearing = round(compass_bearing, ndigits=1)
+    compass_bearing = deg_to_pinwheel(compass_bearing)
     return compass_bearing
 
 
