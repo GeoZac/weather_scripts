@@ -7,8 +7,7 @@ from config import api_key, home
 
 url = "https://api.aerisapi.com/tropicalcyclones/?&filter=all&limit=5&format=json&{}".format(api_key)
 
-home = home.split(",")
-loc_home = float(home[0]), float(home[1])
+loc_home = [float(x) for x in home.split(",")]
 
 
 def fetch_data():  # Get the current data from weather channel
