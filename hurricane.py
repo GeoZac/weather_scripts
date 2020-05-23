@@ -5,13 +5,13 @@ from requests import get
 
 from config import api_key, home
 
-url = "https://api.aerisapi.com/tropicalcyclones/?&filter=all&limit=5&format=json&{}".format(api_key)
+URL = "https://api.aerisapi.com/tropicalcyclones/?&filter=all&limit=5&format=json&{}".format(api_key)
 
-loc_home = [float(x) for x in home.split(",")]
+LOC_HOME = [float(x) for x in home.split(",")]
 
 
 def fetch_data():  # Get the current data from weather channel
-    data = get(url).json()
+    data = get(URL).json()
     return data
 
 
@@ -19,7 +19,7 @@ def extendedprediction(who, forecast):
     for index in forecast:
         pos = index["location"]["coordinates"]
         time = dt.fromtimestamp(index["timestamp"]).strftime("%H:%M %d/%m")
-        dist = round(haversine(reversed(pos), loc_home), ndigits=3)
+        dist = round(haversine(reversed(pos), LOC_HOME), ndigits=3)
         speed = index["details"]["windSpeedKPH"]
         print("{} will be at {} on {} which is {} km far with speeds of {} kmph".format(who, pos, time, dist, speed))
 
@@ -28,7 +28,7 @@ def get_data(data, index):  # Fetches current state of cyclone whose name is pas
     try:
         name = data[index]["profile"]["name"]
         loc = data[index]["position"]["location"]["coordinates"]
-        how_far = round(haversine(reversed(loc), loc_home), ndigits=3)
+        how_far = round(haversine(reversed(loc), LOC_HOME), ndigits=3)
         wind_speed = data[index]["position"]["details"]["windSpeedKPH"]
         gust_speed = data[index]["position"]["details"]["gustSpeedKPH"]
         direction = data[index]["position"]["details"]["movement"]["direction"]
@@ -55,7 +55,7 @@ def get_current():  # Fetches current Tropical Cyclones,to get the name to be pa
         for item in current:
             name = item["profile"]["name"]
             coor = item["position"]["location"]["coordinates"]
-            how_far = round(haversine(reversed(coor), loc_home), ndigits=2)
+            how_far = round(haversine(reversed(coor), LOC_HOME), ndigits=2)
             print(index, name, how_far, "km")
         selection = int(input("Enter no of hurricane to track: "))
         get_data(current, selection - 1)
