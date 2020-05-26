@@ -1,35 +1,62 @@
 import requests
-import sys
+from haversine import haversine
+
 from config import api_key, home
 
+LOC_HOME = [float(x) for x in home.split(",")]
 
-# noinspection PyUnusedLocal
+
+def get_loc_weather(loc):
+    degree_sign = "\N{DEGREE SIGN}"
+    condition_url = f"https://api.aerisapi.com/observations/{loc}?&format=json&filter=allstations&limit=1&{api_key}"
+    resp = requests.get(condition_url).json()
+    observation = resp["response"]["ob"]
+    condition = observation["weatherShort"]
+    temp_cel = str(observation["tempC"]) + degree_sign + "C"
+    humidity = str(observation["humidity"]) + " %"
+    wind_spe = str(observation["windKPH"]) + " kmph"
+    wind_dir = str(observation["windDirDEG"]) + degree_sign
+    full_location = str(resp["response"]["place"]["name"]).capitalize()
+    print(
+        "The current conditions in {0} are:\n"
+        "Temeprature: {1}\n"
+        "Condition  : {2}\n"
+        "Humidity   : {3}\n"
+        "Wind Speed : {4}\n"
+        "Wind Dir.  : {5}\n".format(
+            full_location, temp_cel, condition, humidity, wind_spe, wind_dir
+        )
+    )
+
+
 def get_weather(loc):
-    lookup_url = "https://api.aerisapi.com/places/search?query=name:{}&limit=10&{}".format(loc, api_key)
-    condition_url = "https://api.aerisapi.com/observations/{}?&format=json&filter=allstations&limit=1&{}".format(home, api_key)
-
-    degree_sign = u'\N{DEGREE SIGN}'
+    co_ors = []
+    index = 1
+    lookup_url = f"https://api.aerisapi.com/places/search?query=name:{loc}&limit=10&{api_key}"
     geolookup = requests.get(lookup_url)
-    # if (len(geolookup.json())) == 2:
-    try:
-        resp = requests.get(condition_url)
-        condition = resp.json()["response"]["ob"]["weatherShort"]
-        # temp_c = str(resp.json()['current_observation']['temp_c']) + '' + degree_sign + "C"
-        # temp_f = str(resp.json()['current_observation']['temp_f']) + '' + degree_sign + "F"
-        # temp = temp_c + "/" +temp_f
-        temp = resp.json()["response"]["ob"]["tempC"]
-        full_location = resp.json()["response"]["place"]["name"]
-        weather = "The current temperature in {0} is {1}.".format(
-            full_location, temp)
-        print(weather)
-    except KeyError:
-        print("WeatherUndeground Sucks")
+    places = geolookup.json()["response"]
+    if not places:
+        print("Location lookup failed")
+        return
+    for place in places:
+        coor = [place["loc"]["lat"], place["loc"]["long"]]
+        co_ors.append(coor)
+        how_far = round(haversine(coor, LOC_HOME), ndigits=2)
+        city = place["place"]["name"]
+        country = place["place"]["countryFull"]
+        print(index, city, "({})".format(country), how_far, "km")
+        index += 1
+    choice = int(input("Enter location: "))
+    get_loc_weather(co_ors[choice - 1])
 
 
+def conditions():
+    selection = input("Enter City Name:")
+    if selection.lower() == "h":
+        get_loc_weather(home)
+    else:
+        get_weather(selection)
 
 
-if __name__ == '__main__':
-    try:
-        get_weather(sys.argv[1])
-    except IndexError:
-        get_weather(input("Enter City Name:"))
+if __name__ == "__main__":
+    conditions()
