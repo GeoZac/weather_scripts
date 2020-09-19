@@ -18,14 +18,13 @@ def get_loc_weather(loc):
     wind_dir = str(observation["windDirDEG"]) + degree_sign
     full_location = str(resp["response"]["place"]["name"]).capitalize()
     print(
-        "The current conditions in {0} are:\n"
-        "Temeprature: {1}\n"
-        "Condition  : {2}\n"
-        "Humidity   : {3}\n"
-        "Wind Speed : {4}\n"
-        "Wind Dir.  : {5}\n".format(
-            full_location, temp_cel, condition, humidity, wind_spe, wind_dir
-        )
+        f"The current conditions in {full_location} are:",
+        f"Temeprature : {temp_cel}",
+        f"Condition   : {condition}",
+        f"Humidity    : {humidity}",
+        f"Wind Speed  : {wind_spe}",
+        f"Wind Dir.   : {wind_dir}",
+        sep="\n"
     )
 
 
