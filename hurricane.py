@@ -93,6 +93,7 @@ def get_current():  # Fetches current Tropical Cyclones,to get the name to be pa
             coor = item["position"]["location"]["coordinates"]
             how_far = round(haversine(reversed(coor), LOC_HOME), ndigits=2)
             print(index, name, how_far, "km")
+            index += 1
         selection = int(input("Enter no of hurricane to track: "))
         get_data(current, selection - 1)
 
