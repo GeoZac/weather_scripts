@@ -60,7 +60,7 @@ def extendedprediction(who, forecast, initial):
         time = dt.fromtimestamp(index["timestamp"]).strftime("%H:%M %d/%m")
         dist = round(haversine(reversed(pos), LOC_HOME), ndigits=3)
         speed = index["details"]["windSpeedKPH"]
-        bearing = calculate_compass_bearing(initial, pos)
+        bearing = calculate_compass_bearing(pos, initial)
         print(f"{who} will be at {pos} on {time} which is {dist} km far with speeds of {speed} kmph moving {bearing}")
         initial = pos
 
